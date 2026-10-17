@@ -1,0 +1,834 @@
+@import "katex/dist/katex.min.css";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #F7F9FC;
+  --foreground: #0f172a;
+  --card-bg: #FFFFFF;
+  --accent-blue: #2563eb;
+  --accent-cyan: #0284c7;
+  --border-light: #e2e8f0;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans), 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  perspective: 1200px;
+}
+
+/* Technical font for math and calculations */
+.font-mono,
+.math-num {
+  font-family: var(--font-mono), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Clean, smooth light scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ========================================================
+   3D PERSPECTIVE & TRANSFORMATION SYSTEM
+   ======================================================== */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.perspective-1200 {
+  perspective: 1200px;
+}
+.perspective-1600 {
+  perspective: 1600px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* ========================================================
+   SUBTLE 3D TACTILE CALCULATOR BUTTONS
+   Physical scientific instrument keys with micro-depth
+   ======================================================== */
+/* ========================================================
+   SUBTLE 3D BUTTON PRESS & ELEVATION PHYSICS (Section 3)
+   Physical scientific instrument keys with true 3D depth
+   ======================================================== */
+.calc-btn-3d {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  border-radius: 0.85rem;
+  transform: translateY(0) translateZ(0);
+  transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.08s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.12s ease;
+  outline: none;
+  transform-style: preserve-3d;
+}
+
+/* HOVER: Key slightly lifts in 3D space */
+.calc-btn-3d:hover {
+  transform: translateY(-2.5px) translateZ(6px);
+}
+
+/* ACTIVE / CLICK: Key physically compresses down into chassis */
+.calc-btn-3d:active {
+  transform: translateY(3.5px) translateZ(-3px) scale(0.98);
+}
+
+/* 1. Numeric Keypad Buttons (0-9, .) - Clean White Elevated Key with 3D Pedestal */
+.calc-btn-num {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-top: 1.5px solid #ffffff;
+  box-shadow: 0 4px 0 0 #cbd5e1, 0 5px 0 0 #94a3b8, 0 6px 10px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.calc-btn-num:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  box-shadow: 0 6px 0 0 #cbd5e1, 0 7px 0 0 #94a3b8, 0 10px 16px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.calc-btn-num:active {
+  box-shadow: 0 1px 0 0 #94a3b8, 0 2px 4px rgba(15, 23, 42, 0.06), inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* 2. Scientific Function Buttons (sin, cos, tan, log, powers, etc.) - Chiseled Slate-Gray Key */
+.calc-btn-sci {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  border-top: 1.5px solid #ffffff;
+  box-shadow: 0 3.5px 0 0 #cbd5e1, 0 4.5px 0 0 #94a3b8, 0 5px 8px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.calc-btn-sci:hover {
+  background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #0f172a;
+  box-shadow: 0 5.5px 0 0 #cbd5e1, 0 6.5px 0 0 #94a3b8, 0 8px 14px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.calc-btn-sci:active {
+  box-shadow: 0 1px 0 0 #94a3b8, 0 1px 3px rgba(15, 23, 42, 0.05), inset 0 2px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* 3. Arithmetic Operator Buttons (+, −, ×, ÷) - Vibrant Ice-Cyan 3D Key */
+.calc-btn-op {
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+  color: #0284c7;
+  border: 1px solid #7dd3fc;
+  border-top: 1.5px solid #ffffff;
+  box-shadow: 0 3.5px 0 0 #38bdf8, 0 4.5px 0 0 #0284c7, 0 6px 12px rgba(2, 132, 199, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.calc-btn-op:hover {
+  background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
+  box-shadow: 0 5.5px 0 0 #38bdf8, 0 6.5px 0 0 #0284c7, 0 10px 18px rgba(2, 132, 199, 0.2), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.calc-btn-op:active {
+  box-shadow: 0 1px 0 0 #0284c7, 0 2px 4px rgba(2, 132, 199, 0.1), inset 0 2px 4px rgba(2, 132, 199, 0.15);
+}
+
+/* 4. Memory Function Buttons (MC, M-, M+, MR, Ans) - Metallic Light Gray Key */
+.calc-btn-mem {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  border-top: 1.5px solid #ffffff;
+  box-shadow: 0 3.5px 0 0 #cbd5e1, 0 4.5px 0 0 #94a3b8, 0 5px 8px rgba(15, 23, 42, 0.05);
+}
+.calc-btn-mem:hover {
+  background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #0f172a;
+  box-shadow: 0 5.5px 0 0 #cbd5e1, 0 6.5px 0 0 #94a3b8, 0 8px 12px rgba(15, 23, 42, 0.09);
+}
+.calc-btn-mem:active {
+  box-shadow: 0 1px 0 0 #94a3b8;
+}
+
+/* 5. Clear / AC - Crimson 3D Action Key */
+.calc-btn-danger {
+  background: linear-gradient(180deg, #fff1f2 0%, #ffe4e6 100%);
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  border-top: 1.5px solid #ffffff;
+  box-shadow: 0 3.5px 0 0 #f43f5e, 0 4.5px 0 0 #be123c, 0 6px 12px rgba(225, 29, 72, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.calc-btn-danger:hover {
+  background: linear-gradient(180deg, #ffe4e6 0%, #fecdd3 100%);
+  color: #be123c;
+  box-shadow: 0 5.5px 0 0 #f43f5e, 0 6.5px 0 0 #be123c, 0 10px 18px rgba(225, 29, 72, 0.22);
+}
+.calc-btn-danger:active {
+  box-shadow: 0 1px 0 0 #be123c, 0 2px 4px rgba(225, 29, 72, 0.15), inset 0 2px 4px rgba(190, 18, 60, 0.15);
+}
+
+/* 6. Backspace / Delete - Tactile Amber-tinted Gray */
+.calc-btn-warning {
+  background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+  color: #b45309;
+  border: 1px solid #fde68a;
+  border-top: 1.5px solid #ffffff;
+  box-shadow: 0 3.5px 0 0 #f59e0b, 0 4.5px 0 0 #b45309, 0 6px 12px rgba(245, 158, 11, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.calc-btn-warning:hover {
+  background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  box-shadow: 0 5.5px 0 0 #f59e0b, 0 6.5px 0 0 #b45309, 0 10px 18px rgba(245, 158, 11, 0.18);
+}
+.calc-btn-warning:active {
+  box-shadow: 0 1px 0 0 #b45309, 0 2px 4px rgba(245, 158, 11, 0.12), inset 0 2px 4px rgba(180, 83, 9, 0.15);
+}
+
+/* 7. Equals Button (=) - Hero Cobalt Blue 3D Key */
+.calc-btn-equals {
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: 1px solid #1e40af;
+  border-top: 1.5px solid #93c5fd;
+  box-shadow: 0 4.5px 0 0 #1e3a8a, 0 6px 0 0 #172554, 0 8px 18px rgba(37, 99, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.calc-btn-equals:hover {
+  background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+  box-shadow: 0 6.5px 0 0 #1e3a8a, 0 8px 0 0 #172554, 0 12px 24px rgba(37, 99, 235, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.calc-btn-equals:active {
+  box-shadow: 0 1px 0 0 #172554, 0 2px 5px rgba(37, 99, 235, 0.2), inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================================
+   PHYSICAL 3D CALCULATOR CHASSIS SYSTEM
+   Realistic thickness, layered extruded sides & desk shadow
+   ======================================================== */
+.calc-chassis-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 35%, #f4f6f9 100%);
+  border: 1px solid #cbd5e1;
+  border-top: 2px solid #ffffff;
+  border-bottom: 2px solid #94a3b8;
+  box-shadow:
+    0 1px 0 1px #ffffff,
+    0 6px 0 0 #e2e8f0,
+    0 10px 0 0 #cbd5e1,
+    0 14px 0 0 #94a3b8,
+    0 18px 4px rgba(15, 23, 42, 0.16),
+    0 26px 40px rgba(15, 23, 42, 0.12),
+    0 50px 85px rgba(15, 23, 42, 0.08);
+  transform-style: preserve-3d;
+}
+
+/* 3D Recessed LCD Display Frame */
+.calc-screen-recessed-3d {
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 60%, #f8fafc 100%);
+  border: 1px solid #cbd5e1;
+  border-bottom: 1.5px solid #ffffff;
+  box-shadow:
+    inset 0 3px 6px rgba(15, 23, 42, 0.12),
+    inset 0 1px 2px rgba(15, 23, 42, 0.18),
+    0 1px 0 #ffffff;
+}
+
+/* 3D Solar Photovoltaic Sensor Array */
+.calc-solar-panel-3d {
+  background: linear-gradient(135deg, #2b1f1d 0%, #1a1210 100%);
+  border: 1.5px solid #94a3b8;
+  border-top: 1.5px solid #64748b;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    0 1px 0 #ffffff;
+}
+
+/* ========================================================
+   3D CARD HOVER & SHADOW SYSTEM
+   ======================================================== */
+.card-3d {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 
+              0 1px 3px rgba(15, 23, 42, 0.02);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.2s ease;
+  transform-style: preserve-3d;
+}
+
+.card-3d:hover {
+  transform: translateY(-4px) translateZ(8px);
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.09), 
+              0 2px 6px rgba(15, 23, 42, 0.04);
+  border-color: rgba(203, 213, 225, 0.9);
+}
+
+/* Glass-like floating 3D elements */
+.glass-3d {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 25px -4px rgba(15, 23, 42, 0.06),
+              inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+/* Specular sheen reflection across 3D surfaces */
+.specular-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+/* ========================================================
+   3D KEYFRAME ANIMATIONS
+   ======================================================== */
+
+/* Calculation Result 3D Flow: Emerges forward in 3D from display */
+@keyframes answerPop3D {
+  0% {
+    opacity: 0;
+    transform: translateZ(-25px) translateY(14px) scale(0.95);
+    filter: blur(2px);
+  }
+  65% {
+    opacity: 1;
+    transform: translateZ(18px) translateY(-3px) scale(1.04);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateZ(0) translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-answer-pop-3d {
+  animation: answerPop3D 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3D Elevated Result Card Entrance */
+@keyframes resultCardFloat3D {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) rotateX(6deg) scale(0.96);
+  }
+  60% {
+    transform: translateY(-2px) rotateX(-1deg) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg) scale(1);
+  }
+}
+
+.animate-result-card-3d {
+  animation: resultCardFloat3D 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Full Page Staggered Load Animations */
+@keyframes entranceFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes entranceCalcRise {
+  0% {
+    opacity: 0;
+    transform: translateY(35px) translateZ(-40px) rotateX(4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateZ(0) rotateX(0deg);
+  }
+}
+
+.animate-entrance-calc {
+  animation: entranceCalcRise 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.animate-entrance-hero {
+  animation: entranceFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+.animate-entrance-nav {
+  animation: entranceFadeIn 0.4s ease-out 0s both;
+}
+
+/* Slow 3D floating for background objects */
+@keyframes float3DSlow {
+  0%, 100% {
+    transform: translateY(0) translateZ(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) translateZ(10px) rotate(4deg);
+  }
+}
+
+@keyframes float3DFast {
+  0%, 100% {
+    transform: translateY(0) translateZ(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) translateZ(20px) rotate(-6deg);
+  }
+}
+
+.animate-float-slow {
+  animation: float3DSlow 9s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float3DFast 6s ease-in-out infinite;
+}
+
+/* AI Solver converging symbols */
+@keyframes convergeToCenter {
+  0% {
+    opacity: 0.1;
+    transform: scale(1.6) translateZ(-60px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1) translateZ(10px);
+  }
+  100% {
+    opacity: 0.2;
+    transform: scale(0.6) translateZ(0);
+  }
+}
+
+.animate-converge {
+  animation: convergeToCenter 1.8s ease-in-out infinite;
+}
+
+/* Subtle glow pulse */
+@keyframes subtlePulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 2px rgba(37, 99, 235, 0.15);
+  }
+}
+
+.animate-pulse-glow {
+  animation: subtlePulseGlow 3s ease-in-out infinite;
+}
+
+/* 3D Section Transitions (Section 14 & 15) */
+@keyframes section3DEnter {
+  0% {
+    opacity: 0;
+    transform: translateZ(-40px) translateY(24px) rotateX(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateZ(0) translateY(0) rotateX(0deg);
+  }
+}
+
+.animate-section-3d {
+  animation: section3DEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Button Micro-interactions: Success Glow & Error Shake (Section 20) */
+@keyframes buttonErrorShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3px); }
+  40%, 80% { transform: translateX(3px); }
+}
+
+.animate-btn-error {
+  animation: buttonErrorShake 0.3s ease-in-out;
+}
+
+@keyframes buttonSuccessGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  50% { box-shadow: 0 0 14px 2px rgba(16, 185, 129, 0.4); }
+}
+
+.animate-btn-success {
+  animation: buttonSuccessGlow 0.5s ease-out;
+}
+
+/* ========================================================
+   SUTRA 3D BRAND TYPOGRAPHY SYSTEM
+   Extruded bevel, layered ambient shadow & 3D letter elevation
+   ======================================================== */
+.sutra-3d-text {
+  color: #0f172a;
+  letter-spacing: 0.16em;
+  font-weight: 900;
+  text-shadow:
+    0 1px 0 #cbd5e1,
+    0 2px 0 #94a3b8,
+    0 3px 0 #64748b,
+    0 4px 0 #475569,
+    0 5px 1px rgba(15, 23, 42, 0.22),
+    0 7px 8px rgba(15, 23, 42, 0.12),
+    0 14px 18px rgba(15, 23, 42, 0.08);
+}
+
+.sutra-3d-letter {
+  display: inline-block;
+  transform-style: preserve-3d;
+  color: #0f172a;
+  text-shadow:
+    0 1px 0 #cbd5e1,
+    0 2px 0 #94a3b8,
+    0 3px 0 #64748b,
+    0 4px 0 #475569,
+    0 5px 0 #334155,
+    0 6px 1px rgba(15, 23, 42, 0.25),
+    0 8px 8px rgba(15, 23, 42, 0.12),
+    0 14px 20px rgba(15, 23, 42, 0.08);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.25s ease, text-shadow 0.25s ease;
+  will-change: transform;
+}
+
+.sutra-3d-letter:hover {
+  transform: translateY(-8px) translateZ(30px) rotateX(-10deg) scale(1.08) !important;
+  color: #0284c7;
+  text-shadow:
+    0 1px 0 #bae6fd,
+    0 2px 0 #7dd3fc,
+    0 3px 0 #38bdf8,
+    0 4px 0 #0284c7,
+    0 5px 0 #0369a1,
+    0 6px 0 #075985,
+    0 8px 2px rgba(2, 132, 199, 0.35),
+    0 14px 16px rgba(2, 132, 199, 0.2),
+    0 24px 32px rgba(2, 132, 199, 0.15);
+}
+
+/* Navbar 3D wordmark */
+.sutra-nav-3d {
+  color: #0f172a;
+  text-shadow:
+    0 1px 0 #cbd5e1,
+    0 2px 0 #94a3b8,
+    0 3px 2px rgba(15, 23, 42, 0.2);
+  transition: text-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.sutra-nav-3d:hover {
+  transform: translateY(-1px);
+  text-shadow:
+    0 1px 0 #7dd3fc,
+    0 2px 0 #0284c7,
+    0 3px 2px rgba(2, 132, 199, 0.3);
+}
+
+/* DARK MODE 3D STYLING */
+.dark .sutra-3d-text {
+  color: #f8fafc;
+  text-shadow:
+    0 1px 0 #94a3b8,
+    0 2px 0 #64748b,
+    0 3px 0 #475569,
+    0 4px 0 #334155,
+    0 5px 1px rgba(0, 0, 0, 0.6),
+    0 7px 12px rgba(2, 132, 199, 0.25),
+    0 14px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dark .sutra-3d-letter {
+  color: #f8fafc;
+  text-shadow:
+    0 1px 0 #94a3b8,
+    0 2px 0 #64748b,
+    0 3px 0 #475569,
+    0 4px 0 #334155,
+    0 5px 0 #1e293b,
+    0 6px 1px rgba(0, 0, 0, 0.5),
+    0 8px 12px rgba(2, 132, 199, 0.3),
+    0 14px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dark .sutra-nav-3d {
+  color: #f8fafc;
+  text-shadow:
+    0 1px 0 #64748b,
+    0 2px 0 #334155,
+    0 3px 3px rgba(0, 0, 0, 0.5);
+}
+
+.dark .calc-chassis-3d {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 45%, #020617 100%);
+  border: 1px solid #334155;
+  border-top: 2px solid #475569;
+  border-bottom: 2px solid #0f172a;
+  box-shadow:
+    0 1px 0 1px rgba(255, 255, 255, 0.1),
+    0 6px 0 0 #334155,
+    0 10px 0 0 #1e293b,
+    0 14px 0 0 #0f172a,
+    0 18px 6px rgba(0, 0, 0, 0.6),
+    0 26px 45px rgba(0, 0, 0, 0.5),
+    0 55px 90px rgba(0, 0, 0, 0.7);
+}
+
+.dark .calc-screen-recessed-3d {
+  background: linear-gradient(180deg, #090e17 0%, #04070e 100%);
+  border: 1px solid #1e293b;
+  border-bottom: 1px solid #334155;
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.7),
+    inset 0 1px 3px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.dark .calc-btn-num {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #f1f5f9;
+  border: 1px solid #334155;
+  border-top: 1.5px solid #475569;
+  box-shadow: 0 4px 0 0 #0f172a, 0 5px 0 0 #020617, 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.dark .calc-btn-num:hover {
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  box-shadow: 0 6px 0 0 #0f172a, 0 7px 0 0 #020617, 0 10px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.dark .calc-btn-num:active {
+  box-shadow: 0 1px 0 0 #020617, 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.dark .calc-btn-sci {
+  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  color: #94a3b8;
+  border: 1px solid #1e293b;
+  border-top: 1.5px solid #334155;
+  box-shadow: 0 3.5px 0 0 #020617, 0 4.5px 0 0 #000000, 0 5px 10px rgba(0, 0, 0, 0.35);
+}
+.dark .calc-btn-sci:hover {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #f8fafc;
+  box-shadow: 0 5.5px 0 0 #020617, 0 6.5px 0 0 #000000;
+}
+.dark .calc-btn-sci:active {
+  box-shadow: 0 1px 0 0 #000000;
+}
+
+.dark .calc-btn-mem {
+  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  color: #94a3b8;
+  border: 1px solid #1e293b;
+  box-shadow: 0 3.5px 0 0 #020617, 0 4.5px 0 0 #000000;
+}
+.dark .calc-btn-mem:hover {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+}
+
+/* Vintage Pull-Chain Lamp Animations */
+@keyframes lampChainSway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(4deg);
+  }
+  75% {
+    transform: rotate(-4deg);
+  }
+}
+
+@keyframes lampPullBounce {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(14px);
+  }
+  70% {
+    transform: translateY(-2px);
+  }
+  85% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes lampWarmthPulse {
+  0%, 100% {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.85)) drop-shadow(0 0 20px rgba(245, 158, 11, 0.5));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 16px rgba(251, 191, 36, 1)) drop-shadow(0 0 32px rgba(245, 158, 11, 0.75));
+  }
+}
+
+.animate-lamp-chain-sway {
+  transform-origin: 52px 38px;
+  animation: lampChainSway 3.2s ease-in-out infinite;
+}
+
+.animate-lamp-pull {
+  animation: lampPullBounce 0.45s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.animate-lamp-warmth {
+  animation: lampWarmthPulse 2.8s ease-in-out infinite;
+}
+
+/* Page Opening Entrance Animation for the Enlarged Vintage Lamp */
+@keyframes lampEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(-28px) scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(3px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Realistic Ignition Bloom (Dim state smoothly surging into warm illumination) */
+@keyframes lampIgnitionBloom {
+  0% {
+    opacity: 0.2;
+    filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.3));
+  }
+  35% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.6));
+  }
+  70% {
+    opacity: 1;
+    filter: drop-shadow(0 0 26px rgba(251, 191, 36, 1)) drop-shadow(0 0 48px rgba(245, 158, 11, 0.85));
+  }
+  100% {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.9)) drop-shadow(0 0 32px rgba(245, 158, 11, 0.6));
+  }
+}
+
+/* Volumetric Downward Light Beam Opening Bloom */
+@keyframes lampBeamSpread {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.15) scaleX(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1) scaleX(1);
+  }
+}
+
+/* Desk Surface Warm Light Pool Breathing */
+@keyframes lampDeskGlow {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-lamp-entrance {
+  animation: lampEntrance 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-lamp-ignition {
+  animation: lampIgnitionBloom 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.animate-lamp-beam {
+  transform-origin: 50% 0%;
+  animation: lampBeamSpread 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-lamp-desk-pool {
+  animation: lampDeskGlow 3s ease-in-out infinite;
+}
+
+/* Subtle staggered 3D wave animation for hero letters */
+@keyframes sutraLetterWave {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotateX(5deg);
+  }
+}
+
+.animate-sutra-wave-0 { animation: sutraLetterWave 4.5s ease-in-out infinite 0s; }
+.animate-sutra-wave-1 { animation: sutraLetterWave 4.5s ease-in-out infinite 0.25s; }
+.animate-sutra-wave-2 { animation: sutraLetterWave 4.5s ease-in-out infinite 0.5s; }
+.animate-sutra-wave-3 { animation: sutraLetterWave 4.5s ease-in-out infinite 0.75s; }
+.animate-sutra-wave-4 { animation: sutraLetterWave 4.5s ease-in-out infinite 1s; }
+
+/* Respect user prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .calc-btn-3d,
+  .calc-btn-3d:hover,
+  .calc-btn-3d:active,
+  .card-3d,
+  .card-3d:hover {
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-answer-pop-3d,
+  .animate-result-card-3d,
+  .animate-entrance-calc,
+  .animate-entrance-hero,
+  .animate-entrance-nav,
+  .animate-section-3d,
+  .animate-float-slow,
+  .animate-float-fast,
+  .animate-converge,
+  .animate-pulse-glow,
+  .animate-btn-error,
+  .animate-btn-success,
+  .animate-sutra-wave-0,
+  .animate-sutra-wave-1,
+  .animate-sutra-wave-2,
+  .animate-sutra-wave-3,
+  .animate-sutra-wave-4,
+  .sutra-3d-letter,
+  .sutra-3d-letter:hover {
+    animation: none !important;
+    transform: none !important;
+  }
+}
